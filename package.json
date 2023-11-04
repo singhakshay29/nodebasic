@@ -1,12 +1,21 @@
 {
-  "type": "module",
   "name": "nodebasic",
   "version": "1.0.0",
-  "description": "node from Scratch",
+  "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "akshay",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/singhakshay29/nodebasic.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/singhakshay29/nodebasic/issues"
+  },
+  "homepage": "https://github.com/singhakshay29/nodebasic#readme"
 }

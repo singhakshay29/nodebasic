@@ -1,57 +1,54 @@
-//For type 1,2 exports
+//import { appendFile, readFile, unlink } from "fs";
+import { createServer } from "http";
+import { cpus, userInfo } from "os";
 
-// const service = require("./service");
-// console.log(service);
-// const valSum = service.sum(10, 122);
-// console.log(valSum);
-// console.log("hello");
+//
+const user = userInfo();
+//console.log(user);
 
-//for type 3 export
+//
+const number = cpus();
+//console.log(number);
 
-//import { sum, diff } from "./service.js";
+//
 
-// const valSum = sum(10, 122);
-// console.log(valSum);
+//how to create File
 
-// const valDiff = diff(559240, 22033);
-// console.log(valDiff);
-
-//Using Node ------->File system<--------------
-
-//------------------readFileSync---------------
-
-import { sum, diff } from "./service.js";
-import * as fs from "fs";
-
-//const txt = fs.readFileSync("./DWSample1-TXT.txt");
-//it reads file in bytes for that u have to tell in which formate u want to read
-
-// const txt = fs.readFileSync("./DWSample1-TXT.txt", "utf-8");
-// console.log(txt);
-
-//but we don't do like this because we don't do anything which takes time, we don't want to block server
-
-//------------------readFile---------------
-
-//so we use Async which ,it run as a asyncronusly it give response in callback
-
-// const txt = fs.readFile("./DWSample1-TXT.txt", "utf-8", (text) => {
-//   console.log(text);
+// appendFile("file.txt", "Hello World!! I am Learning Node js", (error) => {
+//   if (error) {
+//     console.log(error);
+//   } else {
+//     console.log("Successfully Created");
+//   }
 // });
-//currently it is giving as null
-//readFile take two parameter first one is for error so we have to use two parameter
 
-const t1 = performance.now();
-const txt = fs.readFile("./DWSample1-TXT.txt", "utf-8", (error, text) => {
-  console.log(text);
+//how to read file
+
+// readFile("file.txt", "utf-8", (error, data) => {
+//   if (error) {
+//     console.log(error);
+//   } else {
+//     console.log(data);
+//   }
+// });
+
+//how to delete the file
+
+// unlink("file.txt", (error) => {
+//   if (error) {
+//     console.log(error);
+//   } else {
+//     console.log("Successfully Deleted");
+//   }
+// });
+
+const server = createServer((req, res) => {
+  console.log("Server is up");
+  console.log(req.url);
+  res.writeHead(201, { "Content-Type": "text/html" });
+  res.end("hello");
 });
-//this method is always used
 
-const valSum = sum(10, 122);
-console.log(valSum);
-
-const valDiff = diff(559240, 22033);
-console.log(valDiff);
-const t2 = performance.now();
-console.log(t1);
-console.log(t2);
+server.listen(8080, () => {
+  console.log("listing on Port");
+});
