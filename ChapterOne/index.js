@@ -20,8 +20,8 @@
 
 //------------------readFileSync---------------
 
-import { sum, diff } from "./service.js";
-import * as fs from "fs";
+// import { sum, diff } from "../service.js";
+// import * as fs from "fs";
 
 //const txt = fs.readFileSync("./DWSample1-TXT.txt");
 //it reads file in bytes for that u have to tell in which formate u want to read
@@ -41,17 +41,17 @@ import * as fs from "fs";
 //currently it is giving as null
 //readFile take two parameter first one is for error so we have to use two parameter
 
-const t1 = performance.now();
-const txt = fs.readFile("./DWSample1-TXT.txt", "utf-8", (error, text) => {
-  console.log(text);
-});
+// const t1 = performance.now();
+// const txt = fs.readFile("./DWSample1-TXT.txt", "utf-8", (error, text) => {
+//   console.log(text);
+// });
 //this method is always used
 
-const valSum = sum(10, 122);
-console.log(valSum);
+// const valSum = sum(10, 122);
+// console.log(valSum);
 
-const valDiff = diff(559240, 22033);
-console.log(valDiff);
-const t2 = performance.now();
-console.log(t1);
-console.log(t2);
+// const valDiff = diff(559240, 22033);
+// console.log(valDiff);
+// const t2 = performance.now();
+// console.log(t1);
+// console.log(t2);
