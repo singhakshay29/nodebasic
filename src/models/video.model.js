@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const videoSchema = new mongoose.Schema(
   {
@@ -36,6 +37,7 @@ const videoSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+videoSchema.plugin(aggregatePaginate);
 
 const Video = mongoose.model("Video", videoSchema);
 
