@@ -7,7 +7,7 @@ const router = express.Router();
 router.route("/register").post(
   upload.fields([
     {
-      name: "avtar",
+      name: "avatar",
       maxCount: 1,
     },
     {
@@ -17,6 +17,6 @@ router.route("/register").post(
   ]),
   registerUser
 );
-router.route("/login");
+//router.route("/login").post(loginUser);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const cloudinary = require("cloudinary").v2;
-const fs = require("fs/promises");
+const fs = require("fs");
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -16,8 +16,10 @@ const uploadOnCloudinary = async (localFilePath) => {
       });
       console.log("file uploaded on Cloudinary", response.url);
     }
+    fs.unlinkSync(localFilePath);
+    return response;
   } catch (error) {
-    fs.unlinkSync(localStorage);
+    fs.unlinkSync(localFilePath);
     return null;
   }
 };

@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    avtar: {
+    avatar: {
       type: String, //cloudinary
       required: true,
     },
