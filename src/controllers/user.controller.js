@@ -25,7 +25,6 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Avatar file is required");
   }
   const avatar = await uploadOnCloudinary(avatarLocalPath);
-  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
   let coverImageLocalPath;
   let coverImage;
@@ -37,8 +36,6 @@ const registerUser = asyncHandler(async (req, res) => {
     coverImageLocalPath = req.files.coverImage[0].path;
     coverImage = await uploadOnCloudinary(coverImageLocalPath);
   }
-
-  console.log(avatar);
   if (!avatar) {
     throw new ApiError(400, "Avatar file is not Uploded");
   }
@@ -62,4 +59,80 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "User Registered Succesfully"));
 });
 
-module.exports = registerUser;
+const loginUser = asyncHandler(async (req, res) => {
+  const { userName, email, password } = req.body;
+  if (!userName || !email) {
+    throw new ApiError(400, "username or email is required");
+  }
+  const existedUser = await User.findOne({
+    $or: [{ userName }, { email }],
+  });
+  if (!existedUser) {
+    throw new ApiError(404, "user does not exist");
+  }
+  const isPasswordCorrect = await existedUser.isPasswordCorrect(password);
+  if (!isPasswordCorrect) {
+    throw new ApiError(401, "Invalid user credentials");
+  }
+  const { accesToken, refershToken } = await generateAccessandRefreshToken(
+    existedUser._id
+  );
+
+  const loggedUser = await User.findById(existedUser._id).select(
+    "-password -refershToken"
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res
+    .status(200)
+    .cookie("accessToken", accesToken, options)
+    .cookie("refershToken".refershToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        { user: loggedUser, accesToken, refershToken },
+        "User logged in successfully"
+      )
+    );
+});
+
+const logoutUser = asyncHandler(async (req, res) => {
+  User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        refershToken: undefined,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiError(200, {}, "User logged Out"));
+});
+
+const generateAccessandRefreshToken = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    const accesToken = user.generateAccessToken();
+    const refershToken = user.generateRefreshToken();
+    user.refershToken = refershToken;
+    await user.save({ validateBeforeSave: false });
+    return { accesToken, refershToken };
+  } catch (error) {
+    throw new ApiError(500, "Internal Server Error");
+  }
+};
+
+module.exports = { registerUser, loginUser, logoutUser };
