@@ -61,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { userName, email, password } = req.body;
-  if (!userName || !email) {
+  if (!userName && !email) {
     throw new ApiError(400, "username or email is required");
   }
   const existedUser = await User.findOne({
@@ -74,12 +74,12 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!isPasswordCorrect) {
     throw new ApiError(401, "Invalid user credentials");
   }
-  const { accesToken, refershToken } = await generateAccessandRefreshToken(
+  const { accesToken, refreshToken } = await generateAccessandRefreshToken(
     existedUser._id
   );
 
   const loggedUser = await User.findById(existedUser._id).select(
-    "-password -refershToken"
+    "-password -refreshToken"
   );
 
   const options = {
@@ -89,13 +89,9 @@ const loginUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .cookie("accessToken", accesToken, options)
-    .cookie("refershToken".refershToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(
-      new ApiResponse(
-        200,
-        { user: loggedUser, accesToken, refershToken },
-        "User logged in successfully"
-      )
+      new ApiResponse(200, { user: loggedUser }, "User logged in successfully")
     );
 });
 
@@ -104,7 +100,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     req.user._id,
     {
       $set: {
-        refershToken: undefined,
+        refreshToken: undefined,
       },
     },
     {
@@ -126,10 +122,10 @@ const generateAccessandRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
     const accesToken = user.generateAccessToken();
-    const refershToken = user.generateRefreshToken();
-    user.refershToken = refershToken;
+    const refreshToken = user.generateRefreshToken();
+    user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
-    return { accesToken, refershToken };
+    return { accesToken, refreshToken };
   } catch (error) {
     throw new ApiError(500, "Internal Server Error");
   }

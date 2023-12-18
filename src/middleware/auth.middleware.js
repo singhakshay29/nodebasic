@@ -6,18 +6,18 @@ const User = require("../models/user.model");
 const verifyJwt = asyncHandler(async (req, _, next) => {
   try {
     const token =
-      req.cookies?.accesToken ||
+      req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
+    console.log(token);
 
     if (!token) {
       throw new ApiError(401, "Unauthorization request");
     }
 
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    console.log(decodedToken);
 
-    const user = await User.findById(decodedToken?._id).select(
-      "-password refreshToken"
-    );
+    const user = await User.findById(decodedToken?._id);
 
     if (!user) {
       throw new ApiError(401, "Invalid Access Token");
@@ -25,7 +25,7 @@ const verifyJwt = asyncHandler(async (req, _, next) => {
     req.user = user;
     next();
   } catch (error) {
-    throw new ApiError(401, "Invalid Access Token");
+    throw new ApiError(401, error, "Invalid Access Token");
   }
 });
 module.exports = verifyJwt;
