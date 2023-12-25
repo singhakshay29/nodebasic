@@ -115,3 +115,31 @@
     },
   })
 ];
+//How many users have 'enim' as one of tags
+
+[
+  {
+    $match: {
+      tags: "enim",
+    },
+  },
+  {
+    $count: "tagsWithenim",
+  },
+][
+  //what are name and age of users who are unactive and have tags as 'velit'
+
+  ({
+    $match: {
+      isActive: false,
+      tags: "velit",
+    },
+  },
+  {
+    $project: {
+      name: 1,
+      age: 1,
+      eyeColor: 1,
+    },
+  })
+];
