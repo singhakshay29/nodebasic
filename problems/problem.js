@@ -143,3 +143,77 @@
     },
   })
 ];
+
+// who has registered the most recently
+
+[
+  {
+    $sort: {
+      registered: -1,
+    },
+  },
+  {
+    $limit: 4,
+  },
+  {
+    $project: {
+      name: 1,
+      registered: 1,
+      age: 1,
+      eyeColor: 1,
+    },
+  },
+][
+  //categorized users by their fav fruits
+
+  {
+    $group: {
+      _id: "$favoriteFruit",
+      users: {
+        $push: "$name",
+      },
+      count: {
+        $sum: 1,
+      },
+    },
+  }
+];
+//How many user have 'ad' as the second tag in list of tag
+
+[
+  {
+    $match: {
+      "tags.1": "ad",
+    },
+  },
+  {
+    $count: "secondTag_ad",
+  },
+][
+  //find user who have both 'enim' and 'id' as tag
+
+  ({
+    $match: {
+      tags: { $all: ["enim", "id"] },
+    },
+  },
+  {
+    $count: "matchFindusers",
+  })
+];
+
+//List all companies located in USA with their corresponding user count
+
+[
+  {
+    $match: {
+      "company.location.country": "USA",
+    },
+  },
+  {
+    $group: {
+      _id: "$company.title",
+      usercount: { $sum: 1 },
+    },
+  },
+];
