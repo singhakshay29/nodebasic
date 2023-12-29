@@ -4,6 +4,7 @@ const User = require("../models/user.model");
 const uploadOnCloudinary = require("../utils/cloudnary");
 const ApiResponse = require("../utils/apiResponse");
 const jwt = require("jsonwebtoken");
+const { default: mongoose } = require("mongoose");
 
 const registerUser = asyncHandler(async (req, res) => {
   const { userName, email, fullName, password } = req.body;
@@ -316,11 +317,30 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     );
 });
 
+const getWatchHistory = asyncHandler(async (req, res) => {
+  const user = await User.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(req.user._id),
+      },
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+      },
+    },
+  ]);
+});
+
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
   getCurrentUser,
+  getWatchHistory,
   updatedUserAvatar,
   refreshAccessToken,
   changeCurrentPassword,
